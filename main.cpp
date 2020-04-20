@@ -645,7 +645,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "在您打开一个文件后，可以对它进行任何操作。我们并没有禁止类似打开一个C++文件后用\"Compile Pascal File...\"来进行编译等的操作（尽管这不对），因此您在使用编译/运行这些选项时，请务必确认是否选择了正确的语言！", "Help 02", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "在您打开一个文件后，可以对它进行任何操作。我们并没有禁止类似打开一个C++文件后用\"Compile Pascal File...\"来进行编译等的操作（尽管这不对），因此您在使用编译/运行这些选项时，请务必确认是否选择了正确的编程语言！", "Help 02", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
@@ -661,7 +661,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "由于本软件开发时间较短，因此在使用过程中由以下限制：\n  1.仅用于Windows操作系统的部分支持Win32API的版本。\n  2.C++文件仅支持.cpp, .c++, .cxx后缀名，Pascal文件仅支持.pp后缀名，C++头文件仅支持.hpp后缀名，批处理文件仅支持.bat, .com, .cmd后缀名，请谅解。如您使用其他的后缀名（字符数量不符），可能导致编译运行失败。", "Help 04", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "由于本软件开发时间较短，因此在使用过程中由以下限制：\n  1.仅用于Windows操作系统的支持Win32API的版本。\n  2.C++文件仅支持.cpp, .c++, .cxx扩展名，Pascal文件仅支持.pp扩展名，C++头文件仅支持.hpp扩展名，批处理文件仅支持.bat, .com, .cmd扩展名，请谅解。如您使用其他的后缀名（字符数量不符），可能导致编译运行失败。", "Help 04", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
@@ -709,7 +709,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "若有其他困难，问题，意见或者建议，请您一定要及时联系作者邮箱eric_ni2008@163.com进行咨询或投诉，以便我们今后把ClickIDE做得更加完善！", "Help 10", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "若有其他困难，问题，意见或者建议，请您一定要及时联系作者邮箱eric_ni2008@163.com，或加QQ群：1019034208，进行咨询或投诉，以便我们今后把ClickIDE做得更加完善！", "Help 10", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
