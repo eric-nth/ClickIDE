@@ -872,7 +872,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); 
 					break;
 				}
-				
+				case CM_GITHUB: {
+					ShellExecute(NULL,TEXT("open"), TEXT("https://github.com/EricNTH080103/ClickIDE"), TEXT(""),NULL,SW_SHOWNORMAL);
+					break;
+				}
+				case CM_WEBSITE: {
+					ShellExecute(NULL,TEXT("open"), TEXT("https://ericnth.cn/clickide/"), TEXT(""),NULL,SW_SHOWNORMAL);
+					break;
+				}
 				case CM_ASTYLE: {
 					MessageBox(NULL, "本版本（4.6-Stable）不支持该功能。若想尝鲜，请联系作者获取内测版本。下一个正式版本（4.8-stable）将会包含此功能。\n", "Ah oh~", MB_OK);
 					

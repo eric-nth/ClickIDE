@@ -27,6 +27,8 @@
 #define CM_WLARGE		9038
 #define CM_WSMALL		9037 
 #define CM_CFONT		9036
+#define CM_WEBSITE		9035
+#define CM_GITHUB		9034
 
 #define ID_STATUSBAR    4997
 

@@ -47,9 +47,12 @@ MAINMENU MENU
  
  POPUP "&Help"
  {
-  MENUITEM "&View Variables...", CM_VVARI
+  MENUITEM "View Variables...", CM_VVARI
   MENUITEM SEPARATOR
   MENUITEM "&Flush StatusBar", CM_FLSTB
+  MENUITEM SEPARATOR
+  MENUITEM "&Visit Our Website", CM_WEBSITE
+  MENUITEM "View This Project on Github", CM_GITHUB
   MENUITEM SEPARATOR
   MENUITEM "&Get Help...", CM_GHELP
   MENUITEM "&About...", CM_ABOUT
