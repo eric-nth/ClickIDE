@@ -119,7 +119,7 @@ BOOL DoFileOpenSave(HWND hwnd, BOOL bSave) {
 
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = (bSave ? "C++ Files (*.cpp; *.c++; *.cxx)\0*.cpp;*.c++;*.cxx\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0All Files (*.*)\0*.*\0\0" : "C++ Files (*.cpp; *.c++; *.cxx)\0*.cpp;*.c++;*.cxx\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0ClickIDE Temporary Compilation Logs\0*_compile_tmp.log\0All Files (*.*)\0*.*\0\0");
+	ofn.lpstrFilter = (bSave ? "C++ Files (*.cpp; *.c++)\0*.cpp;*.c++\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0All Files (*.*)\0*.*\0\0" : "C++ Files (*.cpp; *.c++; *.cxx)\0*.cpp;*.c++;*.cxx\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0ClickIDE Temporary Compilation Logs\0*_compile_tmp.log\0All Files (*.*)\0*.*\0\0");
 	ofn.lpstrFile = szFileName;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrDefExt = "";
@@ -157,7 +157,7 @@ BOOL DoFileOpen(HWND hwnd, char rt[]) {
 	rt[0] = 0;
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = "All Files(*.*)\0*.*\0\0";
+	ofn.lpstrFilter = "≈‰÷√…Ë÷√(*.ini)\0*.ini\0\0";
 	ofn.lpstrFile = rt;
 	ofn.nMaxFile = MAX_PATH*4;
 	ofn.lpstrDefExt = "";	
@@ -982,7 +982,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					linecount++;
 				}
 			}
-			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount, wsizes[wordsizepos]);
+			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount+1, wsizes[wordsizepos]);
 			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
 			break;
 		case WM_CLOSE:
