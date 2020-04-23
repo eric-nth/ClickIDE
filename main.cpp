@@ -219,7 +219,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 0, wwidth/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 0, wwidth-60/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
 			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE,0, 0, 60/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
 			/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 			/*4.7*/hFont_ln = CreateFont(14,0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,"Consolas");//创建字体
@@ -245,7 +245,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 0, /*LOWORD(lParam)*/wwidth,/*HIWORD(lParam)*/wheight-90, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 0, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-90, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 0, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-90, TRUE);
 		    }
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
 			GetWindowRect(g_hStatusBar, &rectStatus);
@@ -256,7 +257,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
 				case CM_FILE_OPEN:
-					if (MessageBox (0, " If you open a new file, the unsaved contents will be lost!\n Sure to continue?", "Warning!", MB_YESNO | MB_ICONWARNING) != IDYES) {
+					if (MessageBox (hwnd, " If you open a new file, the unsaved contents will be lost!\n Sure to continue?", "Warning!", MB_YESNO | MB_ICONWARNING) != IDYES) {
 						break;
 					}
 					/*settitle*/ 
@@ -360,7 +361,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetWindowText (hwnd, "Click 4.6 [ About... ]");
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"About..."); 
 					/*end:settitle*/ 
-					MessageBox (NULL, "Click IDE: 2020.4\nVersion: 4.6.0-Insider\nBy: 华育中学 Eric 倪天衡.\nHelp: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal/Bat IDE which based on GNU MinGW/ Free Pascal/ Windows.\nOnly for: Windows.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: ericnth.cn/clickide" , "About...", 0);
+					MessageBox (hwnd, "Click IDE: 2020.4\nVersion: 4.6.0-Insider\nBy: 华育中学 Eric 倪天衡.\nHelp: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal/Bat IDE which based on GNU MinGW/ Free Pascal/ Windows.\nOnly for: Windows.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: ericnth.cn/clickide" , "About...", 0);
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
 					titlestr01+=szFileName;
@@ -381,7 +382,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					sprintf (cmdbuf2, "start \"Click4.6-Executing [%s.exe]\" /max %s.exe",getcppfn(szFileName).c_str(),getcppfn(szFileName).c_str());
 						runprocess (cmdbuf2, 0, 1);
 					} else {
-						MessageBox (NULL, "You haven't compiled this file yet (or have failed in it),\nPlease compile it first!", "Can't Run!", MB_OK | MB_ICONERROR);
+						MessageBox (hwnd, "You haven't compiled this file yet (or have failed in it),\nPlease compile it first!", "Can't Run!", MB_OK | MB_ICONERROR);
 					}
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
@@ -403,7 +404,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 						sprintf (cmdbuf2, "start \"Click4.6-Executing [%s.exe]\" /max %s.exe",getpasfn(szFileName).c_str(),getpasfn(szFileName).c_str());
 						runprocess (cmdbuf2, 0, 1);
 					} else {
-						MessageBox (NULL, "You haven't compiled this file yet (or have failed in it),\nPlease compile it first!", "Can't Run!", MB_OK | MB_ICONERROR);
+						MessageBox (hwnd, "You haven't compiled this file yet (or have failed in it),\nPlease compile it first!", "Can't Run!", MB_OK | MB_ICONERROR);
 					}
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
@@ -445,7 +446,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					wndfin.close();
 					if (errreportcnt>1) {
-						MessageBox (NULL, errreporti.c_str(), "Click 4.6: Compile Error", MB_OK);
+						MessageBox (hwnd, errreporti.c_str(), "Click 4.6: Compile Error", MB_OK);
 						break;
 						fcompiled=0; 
 					} else {
@@ -494,7 +495,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					wndfin.close();
 					if (errreportcnt>1) {
-						MessageBox (NULL, errreporti.c_str(), "Click 4.6: Compile Error", MB_OK);
+						MessageBox (hwnd, errreporti.c_str(), "Click 4.6: Compile Error", MB_OK);
 						fcompiled=0;
 						break;
 					} else {
@@ -684,7 +685,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetWindowText (hwnd, titlestr01.c_str());
 					/*end:settitle*/ 
 					sprintf (cmdbuf1, "szFileName\t= %s\nfsaved         \t= %s\nfopened      \t= %s\nfcompiled   \t= %s\nCurrentTime\t= %s\nCurrentMessage\t= %d/%d\nMessageCount\t= %lld", szFileName, (fsaved ? "True" : "False"), (fopend ? "True" : "False"), (fcompiled ? "True" : "False"), output_time().c_str(), WM_COMMAND, CM_VVARI, variMsgCnt);
-					MessageBox (0, cmdbuf1, "Variables...", MB_OK | MB_ICONINFORMATION);
+					MessageBox (hwnd, cmdbuf1, "Variables...", MB_OK | MB_ICONINFORMATION);
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
 					titlestr01+=szFileName;
@@ -943,8 +944,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				}
 				
 				case CM_ASTYLE: {
-					MessageBox(NULL, "本版本（4.6-Stable）不支持该功能。若想尝鲜，请联系作者获取内测版本。下一个正式版本（4.8-stable）将会包含此功能。\n", "Ah oh~", MB_OK);
-					
+					MessageBox(hwnd, "本版本（4.6-Stable）不支持该功能。若想尝鲜，请联系作者获取内测版本。下一个正式版本（4.8-stable）将会包含此功能。\n", "Ah oh~", MB_OK);
+					break;
 					PostMessage(hwnd, WM_COMMAND, CM_FILE_SAVE, (LPARAM)"");
 					char astylestr[MAX_PATH*6];
 					sprintf(astylestr, "--recursive --style=bsd --convert-tabs --indent=spaces=4 --attach-closing-while --indent-switches --indent-namespaces --indent-continuation=4 --indent-preproc-block --indent-preproc-define --indent-preproc-cond --indent-col1-comments --pad-oper --pad-paren-in --unpad-paren --delete-empty-lines --align-pointer=name --align-reference=name --break-elseifs --add-braces >%s.astyle.log %s*", szFileName, szFileName);
@@ -991,7 +992,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					titlestr01="Click 4.6 [ Exiting... ]";
 					SetWindowText (hwnd, titlestr01.c_str());
 					/*end:settitle*/ 
-			if (MessageBox (NULL, "Are you sure to quit? \nThings which are not saved will be lost!", "Exiting...", MB_OKCANCEL | MB_ICONQUESTION) != IDOK) {
+			if (MessageBox (hwnd, "Are you sure to quit? \nThings which are not saved will be lost!", "Exiting...", MB_OKCANCEL | MB_ICONQUESTION) != IDOK) {
 				/*settitle*/ 
 				titlestr01="Click 4.6 [ ";
 				titlestr01+=szFileName;
