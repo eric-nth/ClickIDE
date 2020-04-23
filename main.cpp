@@ -181,11 +181,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	bool issgzs = 0; /*//*/ //a
 	bool ismtzs = 0;
 	bool dontout = 0;
+	RECT rctA; //定义一个RECT结构体，存储窗口的长宽高
+	int wwidth = 1000, wheight = 600;
 	ofstream fout;
 	HFONT hFont;
 	switch(Message) {
 		case WM_CREATE:
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN,CW_USEDEFAULT, CW_USEDEFAULT, 1000/*CW_USEDEFAULT*/, CW_USEDEFAULT,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
+			wwidth = rctA.right - rctA.left;
+			wheight = rctA.bottom - rctA.top;
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN,CW_USEDEFAULT, CW_USEDEFAULT, wwidth/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, NULL/*GetModuleHandle(NULL)*/, NULL);
 			/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 			    
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
@@ -204,8 +209,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			/*--3.10*/
 			break;
 		case WM_SIZE:
+			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
+			wwidth = rctA.right - rctA.left;
+			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 0, 0, LOWORD(lParam),HIWORD(lParam), TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 0, 0, /*LOWORD(lParam)*/wwidth,/*HIWORD(lParam)*/wheight-90, TRUE);
 		    }
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
 			GetWindowRect(g_hStatusBar, &rectStatus);
@@ -575,7 +583,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					/*end:settitle*/ 
 					break;
 				case CM_STARTCMD:
-					runprocess ("start /max \"Click 4.6 [Command]\"", 0, 1);
+					runprocess ((char*)"start /max \"Click 4.6 [Command]\"", 0, 1);
 					break;
 				case CM_RUNBAT:
 					/*settitle*/ 
@@ -645,7 +653,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "在您打开一个文件后，可以对它进行任何操作。我们并没有禁止类似打开一个C++文件后用\"Compile Pascal File...\"来进行编译等的操作（尽管这不对），因此您在使用编译/运行这些选项时，请务必确认是否选择了正确的编程语言！", "Help 02", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "在您打开一个文件后，可以对它进行任何操作。我们并没有禁止类似打开一个C++文件后用\"Compile Pascal File...\"来进行编译等的操作（尽管这不对），因此您在使用编译/运行这些选项时，请务必确认是否选择了正确的语言！", "Help 02", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
@@ -661,7 +669,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "由于本软件开发时间较短，因此在使用过程中由以下限制：\n  1.仅用于Windows操作系统的支持Win32API的版本。\n  2.C++文件仅支持.cpp, .c++, .cxx扩展名，Pascal文件仅支持.pp扩展名，C++头文件仅支持.hpp扩展名，批处理文件仅支持.bat, .com, .cmd扩展名，请谅解。如您使用其他的后缀名（字符数量不符），可能导致编译运行失败。", "Help 04", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "由于本软件开发时间较短，因此在使用过程中由以下限制：\n  1.仅用于Windows操作系统的部分支持Win32API的版本。\n  2.C++文件仅支持.cpp, .c++, .cxx后缀名，Pascal文件仅支持.pp后缀名，C++头文件仅支持.hpp后缀名，批处理文件仅支持.bat, .com, .cmd后缀名，请谅解。如您使用其他的后缀名（字符数量不符），可能导致编译运行失败。", "Help 04", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
@@ -709,7 +717,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					if (GHELPEXITFLAG) {SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); break;}
 					
-					switch (MessageBox (0, "若有其他困难，问题，意见或者建议，请您一定要及时联系作者邮箱eric_ni2008@163.com，或加QQ群：1019034208，进行咨询或投诉，以便我们今后把ClickIDE做得更加完善！", "Help 10", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
+					switch (MessageBox (0, "若有其他困难，问题，意见或者建议，请您一定要及时联系作者邮箱eric_ni2008@163.com进行咨询或投诉，以便我们今后把ClickIDE做得更加完善！", "Help 10", MB_CANCELTRYCONTINUE | MB_ICONINFORMATION | MB_DEFBUTTON3)) {
 						case IDCANCEL: GHELPEXITFLAG = 1;break;
 						case IDCONTINUE:break;
 						case IDTRYAGAIN: goto GHELPSTARTPLACE;break;
@@ -872,14 +880,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); 
 					break;
 				}
-				case CM_GITHUB: {
-					ShellExecute(NULL,TEXT("open"), TEXT("https://github.com/EricNTH080103/ClickIDE"), TEXT(""),NULL,SW_SHOWNORMAL);
-					break;
-				}
-				case CM_WEBSITE: {
-					ShellExecute(NULL,TEXT("open"), TEXT("https://ericnth.cn/clickide/"), TEXT(""),NULL,SW_SHOWNORMAL);
-					break;
-				}
+				
 				case CM_ASTYLE: {
 					MessageBox(NULL, "本版本（4.6-Stable）不支持该功能。若想尝鲜，请联系作者获取内测版本。下一个正式版本（4.8-stable）将会包含此功能。\n", "Ah oh~", MB_OK);
 					
