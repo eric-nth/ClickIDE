@@ -895,6 +895,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					
 					break;
 				}
+				case CM_GITHUB: {
+					ShellExecute(NULL,TEXT("open"), TEXT("https://github.com/EricNTH080103/ClickIDE"), TEXT(""),NULL,SW_SHOWNORMAL);
+					break;
+				}
+				case CM_WEBSITE: {
+					ShellExecute(NULL,TEXT("open"), TEXT("https://ericnth.cn/clickide/"), TEXT(""),NULL,SW_SHOWNORMAL);
+					break;
+				}
 			}
 			hMenu = GetMenu(hwnd);
 			hFileMenu = GetSubMenu(hMenu, 0);
