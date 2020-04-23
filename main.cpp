@@ -131,6 +131,8 @@ BOOL DoFileOpenSave(HWND hwnd, BOOL bSave) {
 				fsaved=0;
 				return FALSE;
 			}
+		} else {
+			return FALSE;
 		}
 	} else {
 		ofn.Flags = OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY;
@@ -140,7 +142,29 @@ BOOL DoFileOpenSave(HWND hwnd, BOOL bSave) {
 				fopend=0;
 				return FALSE;
 			}
+		} else {
+			return FALSE;
 		}
+	}
+	return TRUE;
+}
+
+BOOL DoFileOpen(HWND hwnd, char rt[]) {
+	OPENFILENAME ofn;
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	rt[0] = 0;
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = "All Files(*.*)\0*.*\0\0";
+	ofn.lpstrFile = rt;
+	ofn.nMaxFile = MAX_PATH*4;
+	ofn.lpstrDefExt = "";	
+	ofn.Flags = OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY;
+	if(GetOpenFileName(&ofn)) {
+		;
+	} else {
+		return FALSE;
 	}
 	return TRUE;
 }
@@ -271,6 +295,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 					break;
 				}
+				case CM_IMPORTSET: {
+					char filenametoimport[MAX_PATH*10];
+					if (!DoFileOpen(hwnd, filenametoimport)) {
+						break;
+					}
+					wordsizepos  = GetPrivateProfileInt(TEXT("FONT"), TEXT("SIZE"), 5, filenametoimport);
+					char fontnameini[100];
+					GetPrivateProfileString(TEXT("FONT"), TEXT("NAME"), TEXT("Inconsolata"), fontnameini, 100, filenametoimport);
+					/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontnameini);//´´½¨×ÖÌå
+					/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+					break;
+				}
 				case CM_FILE_SAVEAS:
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ Saving... ]";
@@ -372,7 +408,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_COMPILE:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Compiling..."); 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "") == 0) {
-						DoFileOpenSave(hwnd, TRUE);
+						if (!DoFileOpenSave(hwnd, TRUE)) {
+							break;
+						}
 					} else {
 						if(!SaveFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), szFileName)) {
 							MessageBox(hwnd, "Save file failed.", "Error",MB_OK|MB_ICONEXCLAMATION);
@@ -418,7 +456,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_COMPILERUN:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Compiling..."); 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "") == 0) {
-						DoFileOpenSave(hwnd, TRUE);
+						if (!DoFileOpenSave(hwnd, TRUE)) {
+							break;
+						}
 					} else {
 						if(!SaveFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), szFileName)) {
 							MessageBox(hwnd, "Save file failed.", "Error",MB_OK|MB_ICONEXCLAMATION);
@@ -474,7 +514,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_COMPILPAS:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Compiling..."); 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "") == 0) {
-						DoFileOpenSave(hwnd, TRUE);
+						if (!DoFileOpenSave(hwnd, TRUE)) {
+							break;
+						}
 					} else {
 						if(!SaveFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), szFileName)) {
 							MessageBox(hwnd, "Save file failed.", "Error",MB_OK|MB_ICONEXCLAMATION);
@@ -521,7 +563,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_COMPILERUPAS:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Compiling..."); 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "") == 0) {
-						DoFileOpenSave(hwnd, TRUE);
+						if (DoFileOpenSave(hwnd, TRUE)) {
+							break;
+						}
 					} else {
 						if(!SaveFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), szFileName)) {
 							MessageBox(hwnd, "Save file failed.", "Error",MB_OK|MB_ICONEXCLAMATION);
