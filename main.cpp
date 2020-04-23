@@ -1,12 +1,13 @@
 #include <windows.h>
 #include <bits/stdc++.h>
 #include <commctrl.h>
+#include <commdlg.h>
 #include "main.h"
 using namespace std;
 HWND hwnd;
 string codealltmp = "";
 int wordsizepos = 4;
-int wsizes[13] = {4,8,12,16,20,22,24,30,36,48,60,72,96};
+int wsizes[15] = {4,8,12,14,16,18,20,22,24,30,36,48,60,72,96};
 string fontname = "Inconsolata";
 
 BOOL runprocess(char szCommandLine[], int fwait, int fshow) {
@@ -209,15 +210,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	int wwidth = 1000, wheight = 600;
 	ofstream fout;
 	HFONT hFont;
+	HFONT hFont_ln;
+	FINDREPLACE repfindtag;
+	char getallcodetmpstr[200000];
+	int linecount = 0;
 	switch(Message) {
 		case WM_CREATE:
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN,CW_USEDEFAULT, CW_USEDEFAULT, wwidth/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, NULL/*GetModuleHandle(NULL)*/, NULL);
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 0, wwidth/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE,0, 0, 60/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
 			/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
-			    
+			/*4.7*/hFont_ln = CreateFont(14,0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,"Consolas");//创建字体
+			
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+			/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUM, WM_SETFONT,(WPARAM)hFont_ln/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			
 			/*3.10*/
 			g_hStatusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
@@ -237,7 +245,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 0, 0, /*LOWORD(lParam)*/wwidth,/*HIWORD(lParam)*/wheight-90, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 0, /*LOWORD(lParam)*/wwidth,/*HIWORD(lParam)*/wheight-90, TRUE);
 		    }
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
 			GetWindowRect(g_hStatusBar, &rectStatus);
@@ -268,7 +276,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					/*end:settitle*/ 
 					break;
 				case CM_WLARGE: {
-					if (wordsizepos >= 11) {
+					if (wordsizepos >= 14) {
 						MessageBox(hwnd, "已经是最大字体！", "", MB_OK);
 						break;
 					}
@@ -785,6 +793,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_EDIT_PASTE:
 					SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_PASTE, 0, 0);
 					break;
+				case CM_EDIT_FIND:
+					ZeroMemory(&repfindtag, sizeof(repfindtag));
+					repfindtag.hwndOwner = hwnd;
+					repfindtag.lpstrFindWhat = "\0";
+					repfindtag.Flags = FR_DOWN|FR_FINDNEXT|FR_MATCHCASE;
+					repfindtag.wFindWhatLen = MAX_PATH;
+					repfindtag.wReplaceWithLen = MAX_PATH;
+					repfindtag.lStructSize = sizeof(repfindtag);
+					FindText(&repfindtag);
+					break;
 				case CM_FLSTB:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 0, (LPARAM)"Click 4.6 IDE"); 
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); 
@@ -794,7 +812,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					break;
 				case CM_GHTML: {
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"GeneratingHTML..."); 
-					char getallcodetmpstr[200000];
 					GetDlgItemText(hwnd, IDC_MAIN_TEXT, getallcodetmpstr, 200000);
 					codealltmp.clear();
 					codealltmp+=getallcodetmpstr;
@@ -955,6 +972,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			EnableMenuItem(hCompileMenu, CM_RUN, MF_BYCOMMAND | ((fcompiled) ? MF_ENABLED : MF_GRAYED));
 			EnableMenuItem(hCompileMenu, CM_RUNPAS, MF_BYCOMMAND | ((fcompiled) ? MF_ENABLED : MF_GRAYED));
 			EnableMenuItem(hCompileMenu, CM_DEBUG, MF_BYCOMMAND | ((fcompiled) ? MF_ENABLED : MF_GRAYED));
+			char tishitext[1024];
+			GetDlgItemText(hwnd, IDC_MAIN_TEXT, getallcodetmpstr, 200000);
+			codealltmp.clear();
+			codealltmp+=getallcodetmpstr;
+			linecount = 0;
+			for (int i = 0; i < codealltmp.size(); i++) {
+				if (codealltmp[i] == '\n') {
+					linecount++;
+				}
+			}
+			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount, wsizes[wordsizepos]);
+			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
 			break;
 		case WM_CLOSE:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Exitting..."); 

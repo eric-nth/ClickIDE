@@ -30,10 +30,12 @@
 #define CM_GITHUB		9035
 #define CM_WEBSITE		9034
 #define CM_IMPORTSET	9033
-#define CM_EXPORTSET	9032 
+#define CM_EXPORTSET	9032
+#define CM_EDIT_FIND	9031 
 
 #define ID_STATUSBAR    4997
 
 #define IDC_MAIN_TEXT   1001
+#define IDC_LINE_NUM	1002
 
 #define KEY_PRESSED(VK_NONAME) ((GetAsyncKeyState(VK_NONAME) & 0x8000) ? 1:0) 
