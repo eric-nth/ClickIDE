@@ -8,7 +8,7 @@ HWND hwnd;
 string codealltmp = "";
 int wordsizepos = 4;
 int wsizes[15] = {4,8,12,14,16,18,20,22,24,30,36,48,60,72,96};
-string fontname = "Inconsolata";
+string fontname = "Consolas";
 bool fsaved=0, fopend=0, fcompiled=0;
 bool programmeexiterrorstatusflag = 1;
 unsigned long long variMsgCnt = 0;
