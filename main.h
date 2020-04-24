@@ -34,8 +34,13 @@
 #define CM_EDIT_FIND	9031 
 
 #define ID_STATUSBAR    4997
+#define ID_TOOLBAR		4998
 
 #define IDC_MAIN_TEXT   1001
 #define IDC_LINE_NUM	1002
+#define IDC_QUICKFUNC	1003
+#define IDC_COMPRUN_C	1004
+#define IDC_COMPRUN_P	1005
+#define IDC_SAVE		1006
 
 #define KEY_PRESSED(VK_NONAME) ((GetAsyncKeyState(VK_NONAME) & 0x8000) ? 1:0) 

@@ -9,6 +9,12 @@ string codealltmp = "";
 int wordsizepos = 4;
 int wsizes[15] = {4,8,12,14,16,18,20,22,24,30,36,48,60,72,96};
 string fontname = "Inconsolata";
+bool fsaved=0, fopend=0, fcompiled=0;
+bool programmeexiterrorstatusflag = 1;
+unsigned long long variMsgCnt = 0;
+HINSTANCE g_hInst;
+char szFileName[MAX_PATH]="Untitled";
+HWND g_hStatusBar, g_hToolBar;
 
 BOOL runprocess(char szCommandLine[], int fwait, int fshow) {
 	BOOL ret = system(szCommandLine);
@@ -38,12 +44,6 @@ BOOL runprocess(char szCommandLine[], int fwait, int fshow) {
 	return ret;
 }
 
-bool fsaved=0, fopend=0, fcompiled=0;
-bool programmeexiterrorstatusflag = 1;
-unsigned long long variMsgCnt = 0;
-HINSTANCE g_hInst;
-char szFileName[MAX_PATH]="Untitled";
-HWND g_hStatusBar;
 
 string output_time() {
 	time_t rawtime;
@@ -119,8 +119,8 @@ BOOL DoFileOpenSave(HWND hwnd, BOOL bSave) {
 
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = (bSave ? "C++ Files (*.cpp; *.c++)\0*.cpp;*.c++\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0All Files (*.*)\0*.*\0\0" : "C++ Files (*.cpp; *.c++; *.cxx)\0*.cpp;*.c++;*.cxx\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows Batching Files (*.bat; *.com; *.cmd)\0*.bat;*.com;*.cmd\0ClickIDE Temporary Compilation Logs\0*_compile_tmp.log\0All Files (*.*)\0*.*\0\0");
-	ofn.lpstrFile = szFileName;
+	ofn.lpstrFilter = (bSave ? "C++ Files (*.cpp; *.c++)\0*.cpp;*.c++\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows命令脚本 (*.bat; *.cmd)\0*.bat;*.cmd\0All Files (*.*)\0*.*\0\0" : "C++ Files (*.cpp; *.c++; *.cxx)\0*.cpp;*.c++;*.cxx\0C++ Header Files (*.hpp)\0*.hpp\0Pascal Files (*.pp)\0*.pp\0Windows命令脚本 (*.bat; *.cmd)\0*.bat;*.com;*.cmd\0ClickIDE Temporary Compilation Logs\0*_compile_tmp.log\0All Files (*.*)\0*.*\0\0");
+ 	ofn.lpstrFile = szFileName;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.lpstrDefExt = "";
 
@@ -219,15 +219,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 0, wwidth-60/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
-			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE,0, 0, 60/*CW_USEDEFAULT*/, wheight-90,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 30, wwidth-60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
+			//CreateWindow("STATIC", "快捷功能：",WS_CHILD|WS_VISIBLE,60, wheight-112, 100, 19,hwnd, (HMENU)IDC_QUICKFUNC, GetModuleHandle(NULL), NULL);
+			//CreateWindow("BUTTON", "Compile && Run as C++ File",WS_CHILD|WS_VISIBLE,180, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_C, GetModuleHandle(NULL), NULL);
+			//CreateWindow("BUTTON", "Compile && Run as Pascal File",WS_CHILD|WS_VISIBLE,400, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_P, GetModuleHandle(NULL), NULL);
+			//CreateWindow("BUTTON", "Save",WS_CHILD|WS_VISIBLE,620, wheight-114, 100, 23,hwnd, (HMENU)IDC_SAVE, GetModuleHandle(NULL), NULL);
+			
 			/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 			/*4.7*/hFont_ln = CreateFont(14,0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,"Consolas");//创建字体
 			
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUM, WM_SETFONT,(WPARAM)hFont_ln/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+			///*4.7*/SendDlgItemMessage(hwnd, IDC_QUICKFUNC, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			
-			/*3.10*/
+			/*3.10: Statusbar*/
 			g_hStatusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
 			WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0,
 			hwnd, (HMENU)ID_STATUSBAR, g_hInst, NULL);
@@ -239,17 +245,108 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			SendMessage(g_hStatusBar, SB_SETTEXT, 3, (LPARAM)""); 
 			SendMessage(g_hStatusBar, SB_SETTEXT, 4, (LPARAM)szFileName); 
 			/*--3.10*/
+			
+			/*4.7: ToolBar*/
+			TBADDBITMAP tbab;
+			TBBUTTON tbb[9];
+			g_hToolBar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
+			WS_CHILD | WS_VISIBLE, 0, 0, 0, 0,
+			hwnd, (HMENU)ID_TOOLBAR, g_hInst, NULL);
+			/*--4.7*/
+			
+			/*
+			***
+			*4.7 Tool Bar
+			*Add Bitmap
+			***
+			*/
+			SendMessage(g_hToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
+			
+			tbab.hInst = HINST_COMMCTRL;
+			tbab.nID = IDB_STD_SMALL_COLOR;
+			SendMessage(g_hToolBar, TB_ADDBITMAP, 0, (LPARAM)&tbab);
+			
+			ZeroMemory(tbb, sizeof(tbb));
+			
+			tbb[0].iBitmap = STD_FILENEW;
+			tbb[0].fsState = TBSTATE_ENABLED;
+			tbb[0].fsStyle = TBSTYLE_BUTTON;
+			tbb[0].idCommand = CM_FILE_NEW;
+			
+			tbb[1].iBitmap = STD_FILEOPEN;
+			tbb[1].fsState = TBSTATE_ENABLED;
+			tbb[1].fsStyle = TBSTYLE_BUTTON;
+			tbb[1].idCommand = CM_FILE_OPEN;
+			
+			tbb[2].iBitmap = STD_FILESAVE;
+			tbb[2].fsState = TBSTATE_ENABLED;
+			tbb[2].fsStyle = TBSTYLE_BUTTON;
+			tbb[2].idCommand = CM_FILE_SAVE;
+			
+			tbb[3].fsStyle = TBSTYLE_SEP;
+			
+			tbb[4].iBitmap = STD_CUT;
+			tbb[4].fsState = TBSTATE_ENABLED;
+			tbb[4].fsStyle = TBSTYLE_BUTTON;
+			tbb[4].idCommand = CM_EDIT_CUT;
+			
+			tbb[5].iBitmap = STD_COPY;
+			tbb[5].fsState = TBSTATE_ENABLED;
+			tbb[5].fsStyle = TBSTYLE_BUTTON;
+			tbb[5].idCommand = CM_EDIT_COPY;
+			
+			tbb[6].iBitmap = STD_PASTE;
+			tbb[6].fsState = TBSTATE_ENABLED;
+			tbb[6].fsStyle = TBSTYLE_BUTTON;
+			tbb[6].idCommand = CM_EDIT_PASTE;
+			
+			tbb[7].fsStyle = TBSTYLE_SEP;
+			
+			tbb[8].iBitmap = STD_UNDO;
+			tbb[8].fsState = TBSTATE_ENABLED;
+			tbb[8].fsStyle = TBSTYLE_BUTTON;
+			tbb[8].idCommand = CM_EDIT_UNDO;
+			
+			tbb[9].iBitmap = STD_FIND;
+			tbb[9].fsState = TBSTATE_ENABLED;
+			tbb[9].fsStyle = TBSTYLE_BUTTON;
+			tbb[9].idCommand = CM_EDIT_FIND;
+			
+			tbb[10].fsStyle = TBSTYLE_SEP;
+			
+			tbb[11].iBitmap = STD_HELP;
+			tbb[11].fsState = TBSTATE_ENABLED;
+			tbb[11].fsStyle = TBSTYLE_BUTTON;
+			tbb[11].idCommand = CM_ABOUT;
+			
+			SendMessage(g_hToolBar, TB_ADDBUTTONS, 12, (LPARAM)&tbb);
+			/*
+			*--4.7
+			*/
 			break;
 		case WM_SIZE:
+			RECT rectClient, rectStatus, rectTool;
+			UINT uToolHeight, uStatusHeight, uClientAlreaHeight;
+			
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 0, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-90, TRUE);
-				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 0, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-90, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 30, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-120, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 30, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-120, TRUE);
 		    }
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
 			GetWindowRect(g_hStatusBar, &rectStatus);
+			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
+			GetWindowRect(g_hStatusBar, &rectStatus);
+			
+			GetClientRect(hwnd, &rectClient);
+			GetWindowRect(g_hStatusBar, &rectStatus);
+			GetWindowRect(g_hToolBar, &rectTool);
+			uToolHeight = rectTool.bottom - rectTool.top;
+			uStatusHeight = rectStatus.bottom - rectStatus.top;
+			uClientAlreaHeight = rectClient.bottom;
+			
 			break;
 		case WM_SETFOCUS:
 			SetFocus(GetDlgItem(hwnd, IDC_MAIN_TEXT));
@@ -265,7 +362,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetWindowText (hwnd, titlestr01.c_str());
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Opening..."); 
 					/*end:settitle*/ 
-					DoFileOpenSave(hwnd, FALSE);
+					if (!DoFileOpenSave(hwnd, FALSE)) {
+						titlestr01="Click 4.6";
+						SetWindowText (hwnd, titlestr01.c_str());
+						SendMessage(g_hStatusBar, SB_SETTEXT, 2, (LPARAM)(fcompiled ? "已编译" : "未编译")); 
+						SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"..."); 
+						break;
+					}
 					fcompiled=0;
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
@@ -572,7 +675,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				case CM_COMPILERUPAS:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Compiling..."); 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "") == 0) {
-						if (DoFileOpenSave(hwnd, TRUE)) {
+						if (!DoFileOpenSave(hwnd, TRUE)) {
 							break;
 						}
 					} else {
