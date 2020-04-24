@@ -5,19 +5,19 @@
 #define CLICK4_0_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"4.6.5.37"
+#define VER_STRING	"4.6.5.39"
 #define VER_MAJOR	4
 #define VER_MINOR	6
 #define VER_RELEASE	5
-#define VER_BUILD	37
+#define VER_BUILD	39
 #define COMPANY_NAME	""
-#define FILE_VERSION	"4.6.5.37"
+#define FILE_VERSION	"4.6.5.39"
 #define FILE_DESCRIPTION	"Click IDE 4.6.5-Stable"
 #define INTERNAL_NAME	""
 #define LEGAL_COPYRIGHT	""
 #define LEGAL_TRADEMARKS	""
 #define ORIGINAL_FILENAME	""
 #define PRODUCT_NAME	""
-#define PRODUCT_VERSION	"4.6.5.37"
+#define PRODUCT_VERSION	"4.6.5.39"
 
 #endif /*CLICK4_0_PRIVATE_H*/

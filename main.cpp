@@ -364,8 +364,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUMT), 60, 30, /*LOWORD(lParam)*/55,/*HIWORD(lParam)*/wheight-120, TRUE);
 				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 30, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-120, TRUE);
 		    }
-			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
-			GetWindowRect(g_hStatusBar, &rectStatus);
+			SendMessage(g_hToolBar, TB_AUTOSIZE, 0, 0);
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
 			GetWindowRect(g_hStatusBar, &rectStatus);
 			
