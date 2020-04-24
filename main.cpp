@@ -232,9 +232,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,115, 30, wwidth-60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
-			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 55/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
-			CreateWindow("STATIC", "1",WS_CHILD|WS_VISIBLE|WS_BORDER,60, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUMT, GetModuleHandle(NULL), NULL);
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,115, 30, wwidth-115/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "1",WS_CHILD|WS_VISIBLE|WS_BORDER,60, 30, 55/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUMT, GetModuleHandle(NULL), NULL);
 			//CreateWindow("STATIC", "快捷功能：",WS_CHILD|WS_VISIBLE,60, wheight-112, 100, 19,hwnd, (HMENU)IDC_QUICKFUNC, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as C++ File",WS_CHILD|WS_VISIBLE,180, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_C, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as Pascal File",WS_CHILD|WS_VISIBLE,400, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_P, GetModuleHandle(NULL), NULL);
@@ -360,7 +360,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 115, 30, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-120, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 115, 30, /*LOWORD(lParam)*/wwidth-115,/*HIWORD(lParam)*/wheight-120, TRUE);
 				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUMT), 60, 30, /*LOWORD(lParam)*/55,/*HIWORD(lParam)*/wheight-120, TRUE);
 				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 30, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-120, TRUE);
 		    }
