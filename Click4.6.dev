@@ -34,19 +34,19 @@ UnitCount=3
 [VersionInfo]
 Major=4
 Minor=6
-Release=0
-Build=235
+Release=5
+Build=2
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=4.6.0.235
-FileDescription=Click IDE 4.6 - Insider
+FileVersion=4.6.5.2
+FileDescription=Click IDE 4.6.5-Stable
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=4.6.0.235
+ProductVersion=4.6.5.2
 AutoIncBuildNr=1
 SyncProduct=1
 

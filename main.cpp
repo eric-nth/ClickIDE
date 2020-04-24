@@ -483,7 +483,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetWindowText (hwnd, "Click 4.6 [ About... ]");
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"About..."); 
 					/*end:settitle*/ 
-					MessageBox (hwnd, "Click IDE: 2020.4\nVersion: 4.6.0-Insider\nBy: 华育中学 Eric 倪天衡.\nGUI: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal IDE which based on MinGW and FPC.\nOnly for: Windows 7/8/8.1/10. You can contact us to get the XP Version.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: https://ericnth.cn/clickide/\nIf you meet some problems, please contact us or visit: Help->Get help..." , "About...", 0);
+					MessageBox (hwnd, "Click IDE: 2020.4\nVersion: 4.6.5-Stable\nBy: 华育中学 Eric 倪天衡.\nGUI: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal IDE which based on MinGW and FPC.\nOnly for: Windows 7/8/8.1/10. You can contact us to get the XP Version.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: https://ericnth.cn/clickide/\nIf you meet some problems, please contact us or visit: Help->Get help..." , "About...", 0);
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
 					titlestr01+=szFileName;
@@ -1108,7 +1108,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					linecount++;
 				}
 			}
-			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount+1, wsizes[wordsizepos]);
+			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.5\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount+1, wsizes[wordsizepos]);
 			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
 			break;
 		case WM_CLOSE:
