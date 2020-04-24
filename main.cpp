@@ -2,6 +2,7 @@
 #include <bits/stdc++.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <io.h>
 #include "main.h"
 using namespace std;
 HWND hwnd;
@@ -15,6 +16,8 @@ unsigned long long variMsgCnt = 0;
 HINSTANCE g_hInst;
 char szFileName[MAX_PATH]="Untitled";
 HWND g_hStatusBar, g_hToolBar;
+bool hasstartopenfile = 0;
+char commandline[MAX_PATH*10] = "";
 
 BOOL runprocess(char szCommandLine[], int fwait, int fshow) {
 	BOOL ret = system(szCommandLine);
@@ -330,6 +333,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			/*
 			*--4.7
 			*/
+			if (hasstartopenfile) {
+				LoadFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), commandline);
+				strcpy(szFileName, commandline);
+				SendMessage(g_hStatusBar, SB_SETTEXT, 4, (LPARAM)szFileName); 
+			}
+			return 0;
 			break;
 		case WM_SIZE:
 			RECT rectClient, rectStatus, rectTool;
@@ -1140,6 +1149,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow) {
+	if (strcmp(lpCmdLine, "") != 0) {
+		hasstartopenfile = 1;
+		if (_access(lpCmdLine, W_OK) == -1) {
+			MessageBox(NULL, "文件不存在或拒绝访问！", "Click 4.6", MB_OK);
+			hasstartopenfile = 0;
+		} else {
+			strcpy(commandline, lpCmdLine);
+		}
+	}
 	WNDCLASSEX wc;
 	//HWND hwnd;
 	MSG Msg;
