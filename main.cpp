@@ -248,7 +248,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			
 			/*4.7: ToolBar*/
 			TBADDBITMAP tbab;
-			TBBUTTON tbb[9];
+			TBBUTTON tbb[14];
 			g_hToolBar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
 			WS_CHILD | WS_VISIBLE, 0, 0, 0, 0,
 			hwnd, (HMENU)ID_TOOLBAR, g_hInst, NULL);
@@ -319,7 +319,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			tbb[11].fsStyle = TBSTYLE_BUTTON;
 			tbb[11].idCommand = CM_ABOUT;
 			
-			SendMessage(g_hToolBar, TB_ADDBUTTONS, 12, (LPARAM)&tbb);
+			tbb[12].fsStyle = TBSTYLE_SEP;
+			
+			tbb[13].iBitmap = STD_DELETE;
+			tbb[13].fsState = TBSTATE_ENABLED;
+			tbb[13].fsStyle = TBSTYLE_BUTTON;
+			tbb[13].idCommand = CM_FILE_EXIT;
+			
+			SendMessage(g_hToolBar, TB_ADDBUTTONS, 14, (LPARAM)&tbb);
 			/*
 			*--4.7
 			*/
@@ -444,7 +451,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Saving..."); 
 					/*end:settitle*/ 
 					if ((!fsaved && !fopend) || strcmp(szFileName, "Untitled") == 0) {
-						DoFileOpenSave(hwnd, TRUE);
+						if (!DoFileOpenSave(hwnd, TRUE)) {
+							SetWindowText (hwnd, "Click 4.6");
+							break;
+						}
 					} else {
 						if(!SaveFile(GetDlgItem(hwnd, IDC_MAIN_TEXT), szFileName)) {
 							MessageBox(hwnd, "Save file failed.\n(Or this is an empty file.)", "Error",MB_OK|MB_ICONEXCLAMATION);
@@ -464,7 +474,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					SetWindowText (hwnd, "Click 4.6 [ About... ]");
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"About..."); 
 					/*end:settitle*/ 
-					MessageBox (hwnd, "Click IDE: 2020.4\nVersion: 4.6.0-Insider\nBy: 华育中学 Eric 倪天衡.\nHelp: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal IDE which based on MinnGW and FPC.\nOnly for: Windows 7/8/8.1/10. You can contact us to get the XP Version.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: https://ericnth.cn/clickide/\nIf you meet some problems, please contact us or visit: Help->Get help..." , "About...", 0);
+					MessageBox (hwnd, "Click IDE: 2020.4\nVersion: 4.6.0-Insider\nBy: 华育中学 Eric 倪天衡.\nGUI: Win32 API.\nIntroduction: Click is an light, open-source, convenient C++/Pascal IDE which based on MinGW and FPC.\nOnly for: Windows 7/8/8.1/10. You can contact us to get the XP Version.\nLicense: Apache License, Version 2.0\nTo learn more or get updates, please visit our official website: https://ericnth.cn/clickide/\nIf you meet some problems, please contact us or visit: Help->Get help..." , "About...", 0);
 					/*settitle*/ 
 					titlestr01="Click 4.6 [ ";
 					titlestr01+=szFileName;
@@ -904,6 +914,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					repfindtag.Flags = FR_DOWN|FR_FINDNEXT|FR_MATCHCASE;
 					repfindtag.wFindWhatLen = MAX_PATH;
 					repfindtag.wReplaceWithLen = MAX_PATH;
+					//repfindtag.lpstrFindWhat = szFindWhat;
+					repfindtag.lCustData = 0;
+					repfindtag.lpfnHook = NULL;
 					repfindtag.lStructSize = sizeof(repfindtag);
 					FindText(&repfindtag);
 					break;
