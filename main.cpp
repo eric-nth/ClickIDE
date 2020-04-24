@@ -188,6 +188,15 @@ string getcppfn (char yufn[]) {
 	return rtttmp;
 }
 
+string i_to_str(int int_num) {
+	string rt;
+	char tmp[100];
+	sprintf(tmp, "%d", int_num);
+	rt.clear();
+	rt+=tmp;
+	return rt;
+}
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	HMENU hMenu, hFileMenu, hCompileMenu;
 	ifstream wndfin;
@@ -217,13 +226,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	FINDREPLACE repfindtag;
 	char getallcodetmpstr[200000];
 	int linecount = 0;
+	string linenumtmptext;
 	switch(Message) {
 		case WM_CREATE:
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
-			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,60, 30, wwidth-60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
-			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
+			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,115, 30, wwidth-60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 55/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "1",WS_CHILD|WS_VISIBLE|WS_BORDER,60, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUMT, GetModuleHandle(NULL), NULL);
 			//CreateWindow("STATIC", "快捷功能：",WS_CHILD|WS_VISIBLE,60, wheight-112, 100, 19,hwnd, (HMENU)IDC_QUICKFUNC, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as C++ File",WS_CHILD|WS_VISIBLE,180, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_C, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as Pascal File",WS_CHILD|WS_VISIBLE,400, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_P, GetModuleHandle(NULL), NULL);
@@ -233,6 +244,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			/*4.7*/hFont_ln = CreateFont(14,0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,"Consolas");//创建字体
 			
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+			/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUMT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUM, WM_SETFONT,(WPARAM)hFont_ln/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			///*4.7*/SendDlgItemMessage(hwnd, IDC_QUICKFUNC, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 			
@@ -348,7 +360,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			wwidth = rctA.right - rctA.left;
 			wheight = rctA.bottom - rctA.top;
 			if(wParam != SIZE_MINIMIZED) {
-				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 60, 30, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-120, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_MAIN_TEXT), 115, 30, /*LOWORD(lParam)*/wwidth-60,/*HIWORD(lParam)*/wheight-120, TRUE);
+				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUMT), 60, 30, /*LOWORD(lParam)*/55,/*HIWORD(lParam)*/wheight-120, TRUE);
 				MoveWindow(GetDlgItem(hwnd, IDC_LINE_NUM), 0, 30, /*LOWORD(lParam)*/60,/*HIWORD(lParam)*/wheight-120, TRUE);
 		    }
 			SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
@@ -369,6 +382,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			break;
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
+				case CM_DT: {
+					MessageBox(NULL, i_to_str(GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT)).c_str(), "", MB_OK);
+					break;
+				}
 				case CM_FILE_OPEN:
 					if (MessageBox (hwnd, " If you open a new file, the unsaved contents will be lost!\n Sure to continue?", "Warning!", MB_YESNO | MB_ICONWARNING) != IDYES) {
 						break;
@@ -402,6 +419,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					/*4.7*/hFont = CreateFont(wsizes[++wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 					/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+					/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUMT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 					break;
 				}
 				case CM_WSMALL: {
@@ -411,6 +429,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					/*4.7*/hFont = CreateFont(wsizes[--wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 					/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+					/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUMT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 					break;
 				}
 				case CM_CFONT: {
@@ -421,6 +440,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					}
 					/*4.7*/hFont = CreateFont(wsizes[wordsizepos],0,0,0,0,FALSE,FALSE,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_SWISS,fontname.c_str());//创建字体
 					/*4.7*/SendDlgItemMessage(hwnd, IDC_MAIN_TEXT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
+					/*4.7*/SendDlgItemMessage(hwnd, IDC_LINE_NUMT, WM_SETFONT,(WPARAM)hFont/*GetStockObject(DEFAULT_GUI_FONT)*/, MAKELPARAM(TRUE,0));
 					break;
 				}
 				case CM_IMPORTSET: {
@@ -1110,7 +1130,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			}
 			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.5\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount+1, wsizes[wordsizepos]);
 			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
-			break;
+			
+			for (int i = GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT); i <= linecount; i++) {
+				//MessageBox(NULL, "", "", NULL);
+				char tmpinsertlinenumstr[20] = "";
+				char tmpinsertlinenumstr2[20];
+				strcpy(tmpinsertlinenumstr2, i_to_str(i+1).c_str());
+				for (int j = 0; j < 6-strlen(tmpinsertlinenumstr2); j++) {
+					strcat(tmpinsertlinenumstr, " ");
+				}
+				strcat(tmpinsertlinenumstr, tmpinsertlinenumstr2);
+				strcat(tmpinsertlinenumstr, "\n");
+				linenumtmptext += tmpinsertlinenumstr;
+			}
+			SetDlgItemText(hwnd, IDC_LINE_NUMT, linenumtmptext.c_str());
+			//SetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT, GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT), 1);
+			break;/*
+		case WM_CTLCOLOREDIT: {
+      		HDC hdc = (HDC)wParam;
+   			SetTextColor(hdc, RGB(0xFF, 0xFF, 0xFF));
+   			SetBkColor((HDC)wParam,RGB(0x0, 0x0, 0x0));
+   			return (long long int)((HBRUSH)GetStockObject(NULL_BRUSH));
+   			break;
+   		}*/
 		case WM_CLOSE:
 					SendMessage(g_hStatusBar, SB_SETTEXT, 1, (LPARAM)"Exitting..."); 
 					/*settitle*/ 
@@ -1138,6 +1180,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				}
 			}
 			*/
+			DeleteObject(hFont);
 			PostQuitMessage(0);
 			break;
 		default:

@@ -31,7 +31,8 @@
 #define CM_WEBSITE		9034
 #define CM_IMPORTSET	9033
 #define CM_EXPORTSET	9032
-#define CM_EDIT_FIND	9031 
+#define CM_EDIT_FIND	9031
+#define CM_DT			9030 
 
 #define ID_STATUSBAR    4997
 #define ID_TOOLBAR		4998
@@ -42,5 +43,6 @@
 #define IDC_COMPRUN_C	1004
 #define IDC_COMPRUN_P	1005
 #define IDC_SAVE		1006
+#define IDC_LINE_NUMT	1007
 
 #define KEY_PRESSED(VK_NONAME) ((GetAsyncKeyState(VK_NONAME) & 0x8000) ? 1:0) 
