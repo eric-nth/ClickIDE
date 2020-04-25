@@ -234,7 +234,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			wheight = rctA.bottom - rctA.top;
 			CreateWindow("EDIT", "",WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|ES_MULTILINE|ES_WANTRETURN|WS_BORDER,115, 30, wwidth-115/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_MAIN_TEXT, GetModuleHandle(NULL), NULL);
 			CreateWindow("STATIC", "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.0",WS_CHILD|WS_VISIBLE|WS_BORDER,0, 30, 60/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUM, GetModuleHandle(NULL), NULL);
-			CreateWindow("STATIC", "1",WS_CHILD|WS_VISIBLE|WS_BORDER,60, 30, 55/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUMT, GetModuleHandle(NULL), NULL);
+			CreateWindow("STATIC", "1",WS_CHILD|WS_VISIBLE|WS_BORDER|SS_RIGHT,60, 30, 55/*CW_USEDEFAULT*/, wheight-120,hwnd, (HMENU)IDC_LINE_NUMT, GetModuleHandle(NULL), NULL);
 			//CreateWindow("STATIC", "¿ì½Ý¹¦ÄÜ£º",WS_CHILD|WS_VISIBLE,60, wheight-112, 100, 19,hwnd, (HMENU)IDC_QUICKFUNC, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as C++ File",WS_CHILD|WS_VISIBLE,180, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_C, GetModuleHandle(NULL), NULL);
 			//CreateWindow("BUTTON", "Compile && Run as Pascal File",WS_CHILD|WS_VISIBLE,400, wheight-114, 200, 23,hwnd, (HMENU)IDC_COMPRUN_P, GetModuleHandle(NULL), NULL);
@@ -1131,6 +1131,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
 			
 			for (int i = GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT); i <= linecount; i++) {
+				/*
 				//MessageBox(NULL, "", "", NULL);
 				char tmpinsertlinenumstr[20] = "";
 				char tmpinsertlinenumstr2[20];
@@ -1139,8 +1140,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					strcat(tmpinsertlinenumstr, " ");
 				}
 				strcat(tmpinsertlinenumstr, tmpinsertlinenumstr2);
-				strcat(tmpinsertlinenumstr, "\n");
-				linenumtmptext += tmpinsertlinenumstr;
+				strcat(tmpinsertlinenumstr, "\n");*/
+				linenumtmptext += i_to_str(i+1);
+				linenumtmptext += "\n";
 			}
 			SetDlgItemText(hwnd, IDC_LINE_NUMT, linenumtmptext.c_str());
 			//SetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT, GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT), 1);
