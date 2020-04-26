@@ -3,6 +3,8 @@
 #include <commctrl.h>
 #include <commdlg.h>
 #include <io.h>
+#include <conio.h>
+#include <tchar.h>
 #include "main.h"
 using namespace std;
 HWND hwnd;
@@ -18,7 +20,8 @@ char szFileName[MAX_PATH]="Untitled";
 HWND g_hStatusBar, g_hToolBar;
 bool hasstartopenfile = 0;
 char commandline[MAX_PATH*10] = "";
-
+string lasttimestr;
+POINT cursorpoint;
 BOOL runprocess(char szCommandLine[], int fwait, int fshow) {
 	BOOL ret = system(szCommandLine);
 	
@@ -227,6 +230,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	char getallcodetmpstr[200000];
 	int linecount = 0;
 	string linenumtmptext;
+	int cursorx=0, cursory=0;
+	int cursorytmp=-1, cursorxtmp=-1;
+	bool cursorxtmpset = 0;
+	bool tosetcur = 0;
+	/*4.8-- 
+	if (tosetcur) {
+		SetCaretPos((cursorpoint.x-6)/(wsizes[wordsizepos]/2.0), (cursorpoint.y-2)/wsizes[wordsizepos]);
+		tosetcur=0;
+	}
+	--4.8*/ 
 	switch(Message) {
 		case WM_CREATE:
 			GetWindowRect(hwnd,&rctA);//通过窗口句柄获得窗口的大小存储在rctA结构中
@@ -383,6 +396,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			switch(LOWORD(wParam)) {
 				case CM_DT: {
 					MessageBox(NULL, i_to_str(GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT)).c_str(), "", MB_OK);
+					GetCaretPos(&cursorpoint);
+					MessageBox(NULL, i_to_str(cursorpoint.x).c_str(), "", MB_OK);
+					MessageBox(NULL, i_to_str(cursorpoint.y).c_str(), "", MB_OK);
+					GetCaretPos(&cursorpoint);
+					cursorx = (cursorpoint.x-6)/(wsizes[wordsizepos]/2.0)+1;
+					cursory = (cursorpoint.y-2)/wsizes[wordsizepos]+1;
+					MessageBox(NULL, i_to_str(cursorx).c_str(), "", MB_OK);
+					MessageBox(NULL, i_to_str(cursory).c_str(), "", MB_OK);
 					break;
 				}
 				case CM_FILE_OPEN:
@@ -1122,11 +1143,45 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			codealltmp.clear();
 			codealltmp+=getallcodetmpstr;
 			linecount = 0;
+			
+			GetCaretPos(&cursorpoint);
+			cursorx = (cursorpoint.x-6)/(wsizes[wordsizepos]/2.0);
+			cursory = (cursorpoint.y-2)/wsizes[wordsizepos];
+			cursorytmp = cursory;
+			cursorxtmp = -1;
 			for (int i = 0; i < codealltmp.size(); i++) {
+				if (cursorytmp == 0 && cursorxtmpset == 0) {
+					cursorxtmp = cursorx;
+					cursorxtmpset = 1;
+				}
+				if(cursorxtmp == 0) {
+					//if (i!=0){
+					if (codealltmp[i] == '(') {
+						/*
+						if (cursorx==0&&cursory==0) {
+							break;
+						}*/
+						tosetcur = 1;
+						/*4.8-- 
+						codealltmp.insert(i+1, ")");
+						SetDlgItemText(hwnd, IDC_MAIN_TEXT, codealltmp.c_str());
+						--4.8*/ 
+						cursorxtmp = -1;
+					}
+					//MessageBox(NULL, "", "", 0);
+					//}
+				}
 				if (codealltmp[i] == '\n') {
 					linecount++;
+					cursorytmp--;
 				}
+				if (codealltmp[i] == '\t') {
+					cursorxtmp-=7;
+				}
+				cursorxtmp--;
 			}
+			cursorxtmp = -1;
+			cursorytmp = -1;
 			sprintf(tishitext, "Welcome\nto\nClickIDE!\n\nVersion:\n4.6.5\n\nWords:\n%d\nLines:\n%d\n\nFont size:%d", codealltmp.size(), linecount+1, wsizes[wordsizepos]);
 			SetDlgItemText(hwnd, IDC_LINE_NUM, tishitext);
 			
@@ -1146,7 +1201,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			}
 			SetDlgItemText(hwnd, IDC_LINE_NUMT, linenumtmptext.c_str());
 			//SetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT, GetScrollPos(GetDlgItem(hwnd, IDC_MAIN_TEXT), SB_VERT), 1);
-			break;/*
+			break;
+		/*
 		case WM_CTLCOLOREDIT: {
       		HDC hdc = (HDC)wParam;
    			SetTextColor(hdc, RGB(0xFF, 0xFF, 0xFF));
